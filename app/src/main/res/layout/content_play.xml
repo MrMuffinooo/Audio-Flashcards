@@ -27,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/btn_correct"
         android:layout_width="0dp"
         android:layout_height="177dp"
         android:backgroundTint="#0CE429"
@@ -37,7 +37,7 @@
         app:srcCompat="@drawable/ic_baseline_check_92" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/btn_wrong"
         android:layout_width="205dp"
         android:layout_height="177dp"
         android:backgroundTint="#E40C0C"
@@ -48,7 +48,7 @@
         app:srcCompat="@drawable/ic_baseline_close_92" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/btn_show"
         android:layout_width="0dp"
         android:layout_height="177dp"
         android:alpha=".3"
@@ -67,7 +67,7 @@
         android:textAlignment="center"
         android:textColor="#170500"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton"
+        app:layout_constraintBottom_toTopOf="@+id/btn_correct"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_set_name"
@@ -80,20 +80,20 @@
         android:text="Tekst przetlumaczony"
         android:textAlignment="center"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton"
+        app:layout_constraintBottom_toTopOf="@+id/btn_correct"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_set_name"
         app:layout_constraintVertical_bias="0.6" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/img_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:alpha="1"
         android:rotation="180"
-        android:tint="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton"
+        app:layout_constraintBottom_toTopOf="@+id/btn_correct"
+        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_baseline_double_arrow_140"
-        tools:layout_editor_absoluteX="271dp" />
+        app:tint="#000000" />
 </androidx.constraintlayout.widget.ConstraintLayout>
