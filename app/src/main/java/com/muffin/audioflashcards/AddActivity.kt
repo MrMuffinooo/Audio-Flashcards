@@ -1,14 +1,11 @@
 package com.muffin.audioflashcards
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 
-class LearnActivity : AppCompatActivity() {
-
+class AddActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_learn)
-
-
+        setContentView(R.layout.activity_add)
     }
 }
