@@ -51,7 +51,6 @@ class FlashcardsStorage {
         }
 
         return r
-
     }
 }
 
