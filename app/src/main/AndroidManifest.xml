@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".PlayActivity" />
         <activity android:name=".LearnActivity" />
+        <activity android:name=".EditActivity" />
     </application>
 
 </manifest>

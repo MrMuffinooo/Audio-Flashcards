@@ -31,28 +31,32 @@
         android:layout_width="0dp"
         android:layout_height="177dp"
         android:backgroundTint="#0CE429"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/divider"
-        app:srcCompat="@drawable/ic_baseline_check_92" />
+        app:srcCompat="@drawable/ic_baseline_check_92"
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/btn_wrong"
         android:layout_width="205dp"
         android:layout_height="177dp"
         android:backgroundTint="#E40C0C"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/divider"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_baseline_close_92" />
+        app:srcCompat="@drawable/ic_baseline_close_92"
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/btn_show"
         android:layout_width="0dp"
         android:layout_height="177dp"
-        android:alpha=".3"
         android:backgroundTint="#4FBBC9"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

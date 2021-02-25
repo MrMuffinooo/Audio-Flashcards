@@ -1,6 +1,6 @@
 package com.muffin.audioflashcards
 
-import java.util.ArrayList
+import java.util.*
 
 class FlashcardsStorage {
     var list:ArrayList<FlashCard> = ArrayList()
@@ -51,6 +51,14 @@ class FlashcardsStorage {
         }
 
         return r
+    }
+
+    fun getRandomFlashcard():FlashCard{
+        return list[Random().nextInt(list.size)]
+    }
+
+    fun get(i:Int): FlashCard {
+        return list[i]
     }
 }
 
