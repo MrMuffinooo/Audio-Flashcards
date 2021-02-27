@@ -23,6 +23,7 @@
         <activity android:name=".PlayActivity" />
         <activity android:name=".LearnActivity" />
         <activity android:name=".EditActivity" />
+        <activity android:name=".FlashcardEditActivity" />
     </application>
 
 </manifest>

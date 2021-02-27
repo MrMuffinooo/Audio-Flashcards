@@ -57,7 +57,8 @@ class FlashcardsStorage {
         return list[Random().nextInt(list.size)]
     }
 
-    fun get(i:Int): FlashCard {
+    fun get(i: Int?): FlashCard {
+        if (i == null) return FlashCard("Brak","Brak")
         return list[i]
     }
 }
