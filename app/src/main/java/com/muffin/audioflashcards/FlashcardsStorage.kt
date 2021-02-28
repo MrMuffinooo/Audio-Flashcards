@@ -14,6 +14,10 @@ class FlashcardsStorage {
         list.remove(f)
     }
 
+    fun removeAt(i:Int){
+        list.removeAt(i)
+    }
+
     fun getSize():Int{
         return list.size
     }

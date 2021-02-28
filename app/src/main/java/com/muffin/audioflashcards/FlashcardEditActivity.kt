@@ -1,12 +1,10 @@
 package com.muffin.audioflashcards
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
 
 
 class FlashcardEditActivity : AppCompatActivity() {
@@ -14,23 +12,17 @@ class FlashcardEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flashcard_edit)
-        val pos = intent.extras?.getInt("POSITION")
-
-        val prefs = getSharedPreferences("flashcards", Context.MODE_PRIVATE)
-        val prefsEditor = prefs.edit()
-        val gson = Gson()
-        val json: String? = prefs.getString("list", "")
-        val list: FlashcardsStorage = gson.fromJson(json, FlashcardsStorage::class.java)
-
-        val f : FlashCard = list.get(pos)
+        val w = intent.extras?.getString("WORD")
+        val t = intent.extras?.getString("TRANSLATION")
+        val e = intent.extras?.getString("EXTRA")
 
         val word = findViewById<EditText>(R.id.etxt_word)
         val translation = findViewById<EditText>(R.id.etxt_translation)
         val extra = findViewById<EditText>(R.id.etxt_extra)
 
-        word.setText(f.word)
-        translation.setText(f.translation)
-        extra.setText(f.extra)
+        word.setText(w)
+        translation.setText(t)
+        extra.setText(e)
 
         findViewById<ImageButton>(R.id.btn_add).setOnClickListener {
             if (word.text.toString().isEmpty()){
@@ -41,15 +33,11 @@ class FlashcardEditActivity : AppCompatActivity() {
                 translation.requestFocus()
                 return@setOnClickListener
             }
-            f.word = word.text.toString()
-            f.translation = translation.text.toString()
-            f.extra = extra.text.toString()
-
-            val json = gson.toJson(list)
-            prefsEditor.putString("list", json)
-            prefsEditor.commit()
-
-
+            val data = Intent()
+            data.putExtra("WORD", word.text.toString())
+            data.putExtra("TRANSLATION", translation.text.toString())
+            data.putExtra("EXTRA", extra.text.toString())
+            setResult(RESULT_OK, data)
             finish()
         }
 
