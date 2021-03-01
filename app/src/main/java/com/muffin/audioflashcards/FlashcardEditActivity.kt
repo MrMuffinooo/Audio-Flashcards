@@ -2,6 +2,9 @@ package com.muffin.audioflashcards
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +27,12 @@ class FlashcardEditActivity : AppCompatActivity() {
         translation.setText(t)
         extra.setText(e)
 
+        word.requestFocus()
+        val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+
+
+
         findViewById<ImageButton>(R.id.btn_add).setOnClickListener {
             if (word.text.toString().isEmpty()){
                 word.requestFocus()
@@ -40,6 +49,28 @@ class FlashcardEditActivity : AppCompatActivity() {
             setResult(RESULT_OK, data)
             finish()
         }
+
+        extra.setOnEditorActionListener lambda@{ v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE){
+                findViewById<ImageButton>(R.id.btn_add).performClick()
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
+                return@lambda true
+            }
+            return@lambda false
+        }
+
+        translation.setOnFocusChangeListener{v,hasfocus->
+            if(hasfocus){
+                translation.setSelection(translation.text.length)
+            }
+        }
+
+        extra.setOnFocusChangeListener{v,hasfocus->
+            if(hasfocus){
+                translation.setSelection(extra.text.length)
+            }
+        }
+
 
     }
 }
