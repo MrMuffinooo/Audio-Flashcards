@@ -25,6 +25,10 @@ class AddActivity : AppCompatActivity() {
         var translation = findViewById<EditText>(R.id.etxt_translation)
         val extra = findViewById<EditText>(R.id.etxt_extra)
 
+        val imeManager = applicationContext.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+
+
         word.requestFocus()
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
@@ -55,6 +59,18 @@ class AddActivity : AppCompatActivity() {
             extra.setText("")
             word.requestFocus()
 
+        }
+
+        translation.setOnFocusChangeListener{ v, hasfocus->
+            if(hasfocus){
+                translation.setSelection(translation.text.length)
+            }
+        }
+
+        extra.setOnFocusChangeListener{ v, hasfocus->
+            if(hasfocus){
+                translation.setSelection(extra.text.length)
+            }
         }
 
         extra.setOnEditorActionListener lambda@{ v, actionId, event ->
