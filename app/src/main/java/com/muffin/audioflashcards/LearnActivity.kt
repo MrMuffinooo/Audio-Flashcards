@@ -20,22 +20,27 @@ class LearnActivity : AppCompatActivity() {
     lateinit var receiver: BroadcastReceiver
     lateinit var txt_word: TextView
     lateinit var txt_trans: TextView
+    lateinit var fadeOut: AlphaAnimation
+    lateinit var fadeIn: AlphaAnimation
 
-    val serviceConnection = object: ServiceConnection{
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            mService = (service as SpeechService.LocalBinder).getService()
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            finish()
-        }
-
-    }
+    lateinit var serviceConnection: ServiceConnection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_learn)
+
+        var serviceConnection: ServiceConnection = object: ServiceConnection{
+            override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                mService = (service as SpeechService.LocalBinder).getService()
+                isBound = true
+                mService.resumeReading()
+            }
+
+            override fun onServiceDisconnected(name: ComponentName?) {
+                finish()
+            }
+
+        }
 
 
         txt_word = findViewById(R.id.txt_to_translate_audio)
@@ -50,10 +55,10 @@ class LearnActivity : AppCompatActivity() {
         stop.visibility = View.VISIBLE
         stop.isEnabled = true
 
-        var fadeIn = AlphaAnimation(0.5f,1f)
+        fadeIn = AlphaAnimation(0.5f,1f)
         fadeIn.duration = 500
 
-        var fadeOut = AlphaAnimation(1f,0.5f)
+        fadeOut = AlphaAnimation(1f,0.5f)
         fadeOut.duration = 500
 
 
@@ -97,8 +102,10 @@ class LearnActivity : AppCompatActivity() {
                     )
 
                     "TRANSLATION" -> {
-                        txt_word.startAnimation(fadeOut)
-                        txt_trans.startAnimation(fadeIn)
+                        //txt_word.startAnimation(fadeOut)
+                        txt_word.alpha = 0.5f
+                        //txt_trans.startAnimation(fadeIn)
+                        txt_trans.alpha = 1f
                     }
 
                     "EXTRA" -> {
@@ -107,7 +114,7 @@ class LearnActivity : AppCompatActivity() {
                 }
             }
         }
-        mService.resumeReading()
+
     }
 
     fun nextFlashcard(W: String, T: String, E: String) {
@@ -117,6 +124,10 @@ class LearnActivity : AppCompatActivity() {
         progress.progress++
         if (progress.progress > progress.max)
             progress.progress = 0
+        //txt_word.startAnimation(fadeIn)
+        txt_word.alpha = 1f
+        //txt_trans.startAnimation(fadeOut)
+        txt_trans.alpha = 0.5f
     }
 
     override fun onStart() {
