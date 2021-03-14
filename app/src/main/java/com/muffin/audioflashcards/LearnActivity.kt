@@ -33,7 +33,6 @@ class LearnActivity : AppCompatActivity() {
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 mService = (service as SpeechService.LocalBinder).getService()
                 isBound = true
-                mService.resumeReading()
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
@@ -85,21 +84,27 @@ class LearnActivity : AppCompatActivity() {
             mService.pauseReading()
         }
         findViewById<ImageButton>(R.id.btn_next).setOnClickListener{
+
             mService.skipNext()
         }
         findViewById<ImageButton>(R.id.btn_prev).setOnClickListener{
+
             mService.skipPrev()
         }
 
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action == null || !intent.action.equals("UI_Update"))
+                    return
                 val s = intent.getStringExtra(SpeechService.UI_broadcast)
                 when(s){
-                    "FLASHCARD" -> nextFlashcard(
-                        intent.getStringExtra("WORD")!!,
-                        intent.getStringExtra("TRANSLATION")!!,
-                        intent.getStringExtra("EXTRA")!!
-                    )
+                    "FLASHCARD" ->
+                        nextFlashcard(
+                                intent.getStringExtra("WORD")!!,
+                                intent.getStringExtra("TRANSLATION")!!,
+                                intent.getStringExtra("EXTRA")!!,
+                                intent.getIntExtra("PROGRESS",0)!!
+                        )
 
                     "TRANSLATION" -> {
                         //txt_word.startAnimation(fadeOut)
@@ -117,13 +122,10 @@ class LearnActivity : AppCompatActivity() {
 
     }
 
-    fun nextFlashcard(W: String, T: String, E: String) {
+    fun nextFlashcard(W: String, T: String, E: String, P :Int) {
         txt_word.text = W
         txt_trans.text = T
-        //TODO("extra")
-        progress.progress++
-        if (progress.progress > progress.max)
-            progress.progress = 0
+        progress.progress = P
         //txt_word.startAnimation(fadeIn)
         txt_word.alpha = 1f
         //txt_trans.startAnimation(fadeOut)
@@ -138,16 +140,13 @@ class LearnActivity : AppCompatActivity() {
         )
     }
 
-    override fun onStop() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
-        super.onStop()
-    }
 
     override fun onDestroy() {
         val intent = Intent(this, SpeechService::class.java)
-        if (isBound && mService != null)
-            unbindService(serviceConnection)
+//        if (isBound && mService != null)
+  //          unbindService(serviceConnection)
         stopService(intent)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
         super.onDestroy()
     }
 }

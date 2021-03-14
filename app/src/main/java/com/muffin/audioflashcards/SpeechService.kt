@@ -6,9 +6,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Binder
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import androidx.core.app.NotificationCompat
@@ -18,12 +16,11 @@ import java.util.*
 
 class SpeechService: Service() {
     private val binder = LocalBinder()
-    var progress = 0
-    var maxValue = 10
+    var prog = 0
+    var maxValue = 9
     var isPaused = false
     lateinit var TTS_JP: TextToSpeech
     lateinit var TTS_LOC: TextToSpeech
-    var wasSilence = false
     var SILENCE_DURATION: Long = 2000
     val broadcaster = LocalBroadcastManager.getInstance(this)
     companion object {
@@ -63,6 +60,11 @@ class SpeechService: Service() {
                         || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                         TODO("install lang")
                     }
+                    else{
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            resumeReading()
+                        }, 1000)
+                    }
                 } else {
                     stopSelf()
                 }
@@ -76,10 +78,10 @@ class SpeechService: Service() {
                     stopSelf()
                     return
                 }
-
-                var f = set.get(progress)
-                sendResult("FLASHCARD", f.word, f.translation, f.extra)
-                wasSilence = false
+                if (utteranceId != "silence") {
+                    var f = set.get(prog)
+                    sendResult("FLASHCARD", f.word, f.translation, f.extra, prog)
+                }
             }
 
             override fun onDone(utteranceId: String?) {
@@ -89,10 +91,9 @@ class SpeechService: Service() {
                 }
                 if (utteranceId != "silence"){
                     TTS_LOC.playSilentUtterance(SILENCE_DURATION, TextToSpeech.QUEUE_FLUSH, "silence")
-                    wasSilence = true
                 }
                 else{
-                    var f = set.get(progress)
+                    var f = set.get(prog)
                     TTS_JP.speak(f.translation, TextToSpeech.QUEUE_FLUSH, null, "trans")
                 }
             }
@@ -109,8 +110,9 @@ class SpeechService: Service() {
                     stopSelf()
                     return
                 }
-                sendResult("TRANSLATION")
-                wasSilence = false
+                if (utteranceId != "silence") {
+                    sendResult("TRANSLATION")
+                }
             }
 
             override fun onDone(utteranceId: String?) {
@@ -120,13 +122,12 @@ class SpeechService: Service() {
                 }
                 if (utteranceId != "silence"){
                     TTS_JP.playSilentUtterance(SILENCE_DURATION, TextToSpeech.QUEUE_FLUSH, "silence")
-                    wasSilence = true
                 }
                 else{
-                    progress++
-                    if (progress > maxValue)
-                        progress = 0
-                    var f = set.get(progress)
+                    prog++
+                    if (prog > maxValue)
+                        prog = 0
+                    var f = set.get(prog)
                     TTS_LOC.speak(f.word, TextToSpeech.QUEUE_FLUSH, null, "word")
                 }
             }
@@ -173,6 +174,7 @@ class SpeechService: Service() {
         set = list.getSetToListen()
 
         maxValue = set.getSize()-1
+        //TODO("pass maxVal to activity")
     }
 
 
@@ -189,7 +191,7 @@ class SpeechService: Service() {
 
     fun resumeReading(){
         isPaused = false
-        var f = set.get(progress)
+        var f = set.get(prog)
         TTS_LOC.speak(f.word, TextToSpeech.QUEUE_FLUSH, null, "word")
     }
 
@@ -200,31 +202,45 @@ class SpeechService: Service() {
     }
 
     fun skipNext(){
-        TTS_LOC.stop()
-        TTS_JP.stop()
-        if (progress == maxValue)
-            progress = 0
+        if (prog == maxValue)
+            prog = 0
         else
-            progress++
-        resumeReading()
+            prog++
+        if (TTS_JP.isSpeaking || TTS_LOC.isSpeaking) {
+            TTS_LOC.stop()
+            TTS_JP.stop()
+            resumeReading()
+        }
+        else{
+            var f = set.get(prog)
+            sendResult("FLASHCARD", f.word, f.translation, f.extra, prog)
+        }
     }
     fun skipPrev(){
-        TTS_LOC.stop()
-        TTS_JP.stop()
-        if (progress == 0)
-            progress = maxValue
+        if (prog == 0)
+            prog = maxValue
         else
-            progress--
-        resumeReading()
+            prog--
+        if (TTS_JP.isSpeaking || TTS_LOC.isSpeaking) {
+            TTS_LOC.stop()
+            TTS_JP.stop()
+            resumeReading()
+        }
+        else{
+            var f = set.get(prog)
+            sendResult("FLASHCARD", f.word, f.translation, f.extra, prog)
+        }
+
     }
 
-    fun sendResult(message: String, word: String ="", trans: String ="", extra: String ="") {
+    fun sendResult(message: String, word: String ="", trans: String ="", extra: String ="", progress: Int = 0) {
         val intent = Intent(UI_broadcast)
         intent.putExtra(UI_broadcast, message)
 
             intent.putExtra("WORD",word)
             intent.putExtra("TRANSLATION",trans)
             intent.putExtra("EXTRA",extra)
+            intent.putExtra("PROGRESS",progress)
 
 
         broadcaster.sendBroadcast(intent)
